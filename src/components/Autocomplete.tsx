@@ -9,6 +9,7 @@ type Props = {
   filteredPeople: Person[];
   onAppliedSearch: (value: string) => void;
   onSelected: (value: Person | null) => void;
+  delay?: number;
 };
 
 function debounce(callback: Function, delay = 300) {
@@ -27,12 +28,13 @@ export const Autocomplete: React.FC<Props> = ({
   filteredPeople,
   onAppliedSearch,
   onSelected,
+  delay,
 }) => {
   const [search, setSearch] = useState('');
 
   const [isActive, setIsActive] = useState(false);
 
-  const applySearch = useCallback(debounce(onAppliedSearch, 1000), []);
+  const applySearch = useCallback(debounce(onAppliedSearch, delay), []);
 
   const handleSearchOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value.trimStart());
@@ -42,6 +44,7 @@ export const Autocomplete: React.FC<Props> = ({
 
   const handleOnSelected = (person: Person) => {
     onSelected(person);
+    setSearch(person.name);
     setIsActive(false);
   };
 

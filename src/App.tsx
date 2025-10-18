@@ -9,9 +9,9 @@ import { Autocomplete } from './components/Autocomplete';
 function getFilteredPeople(people: Person[], search: string): Person[] {
   let filteredPeople = [...people];
 
-  if (search) {
-    const normalizedSearch = search.toLowerCase().trim();
+  const normalizedSearch = (search || '').toLowerCase().trim();
 
+  if (normalizedSearch) {
     filteredPeople = filteredPeople.filter(person =>
       person.name.toLowerCase().includes(normalizedSearch),
     );
@@ -41,6 +41,7 @@ export const App: React.FC = () => {
           filteredPeople={filteredPeople}
           onAppliedSearch={setAppliedSearch}
           onSelected={setSelectedPerson}
+          delay={300}
         />
       </main>
     </div>
