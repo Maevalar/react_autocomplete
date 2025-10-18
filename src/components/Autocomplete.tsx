@@ -9,7 +9,6 @@ type Props = {
   filteredPeople: Person[];
   onAppliedSearch: (value: string) => void;
   onSelected: (value: Person | null) => void;
-  delay?: number;
 };
 
 function debounce(callback: Function, delay = 300) {
@@ -28,33 +27,21 @@ export const Autocomplete: React.FC<Props> = ({
   filteredPeople,
   onAppliedSearch,
   onSelected,
-  delay = 300,
 }) => {
   const [search, setSearch] = useState('');
 
   const [isActive, setIsActive] = useState(false);
 
-  const applySearch = useCallback(debounce(onAppliedSearch, delay), [
-    onAppliedSearch,
-    delay,
-  ]);
+  const applySearch = useCallback(debounce(onAppliedSearch, 1000), []);
 
   const handleSearchOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    const normalized = value.trim();
-
-    setSearch(value);
-
-    if (normalized.length > 0) {
-      applySearch(event.target.value.trimStart());
-    }
-
+    setSearch(event.target.value.trimStart());
+    applySearch(event.target.value.trimStart());
     onSelected(null);
   };
 
   const handleOnSelected = (person: Person) => {
     onSelected(person);
-    setSearch(person.name);
     setIsActive(false);
   };
 
@@ -66,7 +53,6 @@ export const Autocomplete: React.FC<Props> = ({
           placeholder="Enter a part of the name"
           className="input"
           data-cy="search-input"
-          data-qa="autocomplete-input"
           value={search}
           onChange={handleSearchOnChange}
           onFocus={() => setIsActive(true)}
@@ -74,12 +60,7 @@ export const Autocomplete: React.FC<Props> = ({
         />
       </div>
 
-      <div
-        className="dropdown-menu"
-        role="menu"
-        data-cy="suggestions-list"
-        data-qa="suggestions-list"
-      >
+      <div className="dropdown-menu" role="menu" data-cy="suggestions-list">
         {filteredPeople.length > 0 ? (
           <div className="dropdown-content">
             {filteredPeople.map(person => (
@@ -87,7 +68,6 @@ export const Autocomplete: React.FC<Props> = ({
                 key={person.slug}
                 className="dropdown-item"
                 data-cy="suggestion-item"
-                data-qa="suggestion-item"
                 onMouseDown={() => handleOnSelected(person)}
               >
                 <p
@@ -112,7 +92,6 @@ export const Autocomplete: React.FC<Props> = ({
                 "
             role="alert"
             data-cy="no-suggestions-message"
-            data-qa="no-suggestions-message"
           >
             <p className="has-text-danger">No matching suggestions</p>
           </div>
